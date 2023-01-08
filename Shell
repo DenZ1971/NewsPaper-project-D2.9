@@ -1,0 +1,64 @@
+(venv) (base) MacBook-Air-Denis-2:NewsPaper denis$ python manage.py shell
+Python 3.10.7 (v3.10.7:6cc6b13308, Sep  5 2022, 14:02:52) [Clang 13.0.0 (clang-1300.0.29.30)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+>>> from news.models import *
+>>> user11 = User.objects.create_user(username='Pol')
+>>> user11
+<User: Pol>
+>>> user12 = User.objects.create_user(username='Sam')
+>>> user12
+<User: Sam>
+>>> Author.objects.create(authorUser=user11)
+<Author: Author object (1)>
+>>> Author.objects.create(authorUser=user12)
+<Author: Author object (2)>
+>>> Category.objects.create(name='Sport')
+<Category: Category object (1)>
+>>> Category.objects.create(name='Politic')
+<Category: Category object (2)>
+>>> Category.objects.create(name='Education')
+<Category: Category object (3)>
+>>> Category.objects.create(name='IT')
+<Category: Category object (4)>
+>>> Post.objects.create(author=Author.objects.get(id=1), title='sometitle', text='somebigtext')
+<Post: Post object (1)>
+>>> Post.objects.create(author=Author.objects.get(id=2),title='sometitle1',  text='somebigtext1')
+<Post: Post object (2)>
+>>> Post.objects.create(author=Author.objects.get(id=2), categoryType='NW', title='sometitle2', text='somebigtext2')
+<Post: Post object (3)>
+>>> Post.objects.get(id=1).postCategory.add(Category.objects.get(id=1))
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=3))
+>>> Post.objects.get(id=2).postCategory.add(Category.objects.get(id=4))
+>>> Post.objects.get(id=3).postCategory.add(Category.objects.get(id=2))
+>>> Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=Author.objects.get(id=1).authorUser, text='anytext')
+<Comment: Comment object (1)>
+>>> Comment.objects.create(commentPost=Post.objects.get(id=1), commentUser=Author.objects.get(id=2).authorUser, text='anytext')
+<Comment: Comment object (2)>
+>>> Comment.objects.create(commentPost=Post.objects.get(id=2), commentUser=Author.objects.get(id=2).authorUser, text='anytext')
+<Comment: Comment object (3)>
+>>> Comment.objects.create(commentPost=Post.objects.get(id=3), commentUser=Author.objects.get(id=1).authorUser, text='anytext')
+<Comment: Comment object (4)>
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=1).like()
+>>> Post.objects.get(id=2).like()
+>>> Post.objects.get(id=3).dislike()
+>>> Comment.objects.get(id=1).like()
+>>> Comment.objects.get(id=2).dislike()
+>>> Comment.objects.get(id=3).like()
+>>> Comment.objects.get(id=3).like()
+>>> Comment.objects.get(id=3).like()
+>>> Comment.objects.get(id=4).like()
+>>> Author.objects.get(id=1).update_rating()
+>>> Author.objects.get(id=2).update_rating()
+>>> Author.objects.order_by('-ratingAuthor').values('authorUser__username', 'ratingAuthor')[0]
+>>> Post.objects.order_by('-rating').values('timeCreation', 'author__authorUser__username', 'rating', 'title')[0]
+>>> for i in Post.objects.order_by('-rating')[0].comment_set.all():
+...     i.timeCreation
+...     i.commentUser
+...     i.rating
+...     i.text
+
+
+
+
